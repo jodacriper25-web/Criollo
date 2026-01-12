@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Supermercado Yaruquíes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .categoria-badge {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .categoria-badge:hover {
+            transform: scale(1.05);
+        }
+        .categoria-badge.active {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+        .filtro-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .precio-rango {
+            color: #198754;
+            font-weight: bold;
+        }
+        .producto-detalle {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .producto-detalle:hover {
+            background-color: #f8f9fa;
+        }
+        .pagination-container {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación (copiada de index.html) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF6iVUzaGnk8aVKNBtCcn5NkuO2OX6KTmhUw&s" 
+                     alt="Logo Yaruquíes" width="40" height="40" class="d-inline-block align-top me-2">
+                SUPERMERCADO YARUQUÍES
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#ofertas">Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-warning btn-sm" href="admin/login.html">Admin</a></li>
+                </ul>
+                <div class="d-flex ms-3">
+                    <a href="#" class="btn btn-light position-relative" id="carrito-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="carrito-contador">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Encabezado del Catálogo -->
+    <section class="hero-section-catalogo py-5 mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold text-white">Nuestro Catálogo Completo</h1>
+                    <p class="lead text-white">Descubre todos nuestros productos de alta calidad a los mejores precios</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        <small class="text-muted d-block">Productos disponibles</small>
+                        <h3 class="text-success mb-0" id="total-productos">24</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtros y Búsqueda (RF-06: Catálogo público con filtros) -->
+    <section class="py-4">
+        <div class="container">
+            <div class="filtro-container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-success text-white">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="busqueda" 
+                                   placeholder="Buscar productos..." onkeyup="filtrarProductos()">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="me-3">Filtrar por:</span>
+                            <select class="form-select w-auto d-inline-block" id="ordenar" onchange="filtrarProductos()">
+                                <option value="nombre">Nombre (A-Z)</option>
+                                <option value="precio-asc">Precio: Menor a Mayor</option>
+                                <option value="precio-desc">Precio: Mayor a Menor</option>
+                                <option value="recientes">Más Recientes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Categorías -->
+                <div class="mt-4">
+                    <h6 class="mb-3">Categorías:</h6>
+                    <div class="d-flex flex-wrap gap-2" id="categorias-container">
+                        <!-- Las categorías se cargarán dinámicamente -->
+                    </div>
+                </div>
+                
+                <!-- Rango de Precios -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h6>Rango de Precios:</h6>
+                        <input type="range" class="form-range" id="rango-precio" min="0" max="20" step="0.5" value="20" oninput="actualizarRangoPrecio()">
+                        <div class="d-flex justify-content-between">
+                            <span>$0.00</span>
+                            <span class="precio-rango" id="precio-maximo">$20.00</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-outline-success mt-4" onclick="limpiarFiltros()">
+                            <i class="fas fa-redo me-1"></i> Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grid de Productos -->
+    <section class="py-4">
+        <div class="container">
+            <div class="row" id="productos-container">
+                <!-- Los productos se cargarán dinámicamente -->
+            </div>
+            
+            <!-- Paginación -->
+            <div class="row pagination-container">
+                <div class="col-12">
+                    <nav aria-label="Paginación de productos">
+                        <ul class="pagination justify-content-center" id="pagination">
+                            <!-- La paginación se generará dinámicamente -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Detalles del Producto -->
+    <div class="modal fade" id="modalDetalles" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalTitulo">Detalles del Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="modalContenido">
+                        <!-- Contenido dinámico -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-warning" id="btnAgregarModal">
+                        <i class="fas fa-cart-plus me-1"></i> Agregar al Carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>SUPERMERCADO YARUQUÍES</h5>
+                    <p>Tu supermercado de confianza con los mejores precios y calidad.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Av. Cristobal Colon & Padre Lobato</p>
+                    <p><i class="fas fa-phone me-2"></i>0998562847</p>
+                    <p><i class="fas fa-clock me-2"></i>9:00 AM - 9:00 PM</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Síguenos</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center">
+                <p>&copy; 2025 SUPERMERCADO YARUQUÍES. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/carrito.js"></script>
+    <script>
+        // Base de datos de productos (ampliada)
+        const productosCompletos = [
+            { id: 1, nombre: "Arroz Integral", precio: 2.50, categoria: "Granos", descripcion: "Arroz integral de alta calidad, rico en fibra y nutrientes.", imagen: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", stock: 50, destacado: true, oferta: true },
+            { id: 2, nombre: "Aceite de Oliva", precio: 5.75, categoria: "Aceites", descripcion: "Aceite de oliva extra virgen, 1 litro.", imagen: "https://images.unsplash.com/photo-1533050487297-09b450131914?w=400", stock: 30, destacado: true, oferta: false },
+            { id: 3, nombre: "Leche Deslactosada", precio: 1.80, categoria: "Lácteos", descripcion: "Leche deslactosada, 1 litro, envasada.", imagen: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400", stock: 100, destacado: true, oferta: true },
+            { id: 4, nombre: "Azúcar Morena", precio: 1.25, categoria: "Endulzantes", descripcion: "Azúcar morena orgánica, 1kg.", imagen: "https://images.unsplash.com/photo-1582920980148-8d1d0b8b8b8b?w=400", stock: 40, destacado: false, oferta: false },
+            { id: 5, nombre: "Café Molido", precio: 4.20, categoria: "Bebidas", descripcion: "Café molido premium, 500g.", imagen: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400", stock: 25, destacado: true, oferta: true },
+            { id: 6, nombre: "Atún en Lata", precio: 1.50, categoria: "Conservas", descripcion: "Atún enlatado en agua, 180g.", imagen: "https://images.unsplash.com/photo-1588615411919-ca8b4b56d3e6?w=400", stock: 60, destacado: false, oferta: false },
+            { id: 7, nombre: "Harina de Trigo", precio: 1.80, categoria: "Granos", descripcion: "Harina de trigo todo uso, 1kg.", imagen: "https://images.unsplash.com/photo-1569929238190-869df5776d6e?w=400", stock: 45, destacado: false, oferta: false },
+            { id: 8, nombre: "Mantequilla", precio: 2.50, categoria: "Lácteos", descripcion: "Mantequilla sin sal, 250g.", imagen: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400", stock: 35, destacado: false, oferta: true },
+            { id: 9, nombre: "Jugo de Naranja", precio: 2.00, categoria: "Bebidas", descripcion: "Jugo de naranja 100% natural, 1L.", imagen: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400", stock: 28, destacado: false, oferta: false },
+            { id: 10, nombre: "Galletas Integrales", precio: 1.95, categoria: "Snacks", descripcion: "Galletas integrales con avena, 200g.", imagen: "https://images.unsplash.com/photo-1587241321921-91a834d6d191?w=400", stock: 65, destacado: false, oferta: true },
+            { id: 11, nombre: "Pasta Spaghetti", precio: 1.40, categoria: "Granos", descripcion: "Pasta spaghetti, 500g.", imagen: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400", stock: 55, destacado: false, oferta: false },
+            { id: 12, nombre: "Queso Mozzarella", precio: 3.75, categoria: "Lácteos", descripcion: "Queso mozzarella rallado, 200g.", imagen: "https://images.unsplash.com/photo-1549736624-fc7b58bbda5d?w=400", stock: 22, destacado: false, oferta: false },
+            { id: 13, nombre: "Miel de Abeja", precio: 4.50, categoria: "Endulzantes", descripcion: "Miel de abeja pura, 500g.", imagen: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400", stock: 18, destacado: false, oferta: true },
+            { id: 14, nombre: "Salsa de Tomate", precio: 1.20, categoria: "Conservas", descripcion: "Salsa de tomate natural, 400g.", imagen: "https://images.unsplash.com/photo-1563379091339-03246963d9d6?w=400", stock: 42, destacado: false, oferta: false },
+            { id: 15, nombre: "Cereal de Maíz", precio: 2.80, categoria: "Cereales", descripcion: "Cereal de maíz azucarado, 500g.", imagen: "https://images.unsplash.com/photo-1521489870980-53d79622d6d8?w=400", stock: 31, destacado: false, oferta: false },
+            { id: 16, nombre: "Yogurt Natural", precio: 0.95, categoria: "Lácteos", descripcion: "Yogurt natural bajo en grasa, 150g.", imagen: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400", stock: 75, destacado: false, oferta: true },
+            { id: 17, nombre: "Aceite de Girasol", precio: 3.25, categoria: "Aceites", descripcion: "Aceite de girasol, 1L.", imagen: "https://images.unsplash.com/photo-1533050487297-09b450131914?w=400", stock: 27, destacado: false, oferta: false },
+            { id: 18, nombre: "Chocolate Negro", precio: 2.30, categoria: "Dulces", descripcion: "Chocolate negro 70% cacao, 100g.", imagen: "https://images.unsplash.com/photo-1511381939415-e44015466834?w=400", stock: 38, destacado: false, oferta: false },
+            { id: 19, nombre: "Pan Integral", precio: 1.60, categoria: "Panadería", descripcion: "Pan integral rebanado, 500g.", imagen: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400", stock: 20, destacado: false, oferta: true },
+            { id: 20, nombre: "Sal Marina", precio: 0.85, categoria: "Condimentos", descripcion: "Sal marina fina, 1kg.", imagen: "https://images.unsplash.com/photo-1590072817649-e6d1d7b1d7c7?w=400", stock: 50, destacado: false, oferta: false },
+            { id: 21, nombre: "Té Verde", precio: 3.40, categoria: "Bebidas", descripcion: "Té verde en bolsitas, 25 unidades.", imagen: "https://images.unsplash.com/photo-1561047029-3000c68339ca?w=400", stock: 33, destacado: false, oferta: false },
+            { id: 22, nombre: "Mermelada de Fresa", precio: 2.15, categoria: "Dulces", descripcion: "Mermelada de fresa, 250g.", imagen: "https://images.unsplash.com/photo-1627308595216-e8e0d9344d0a?w=400", stock: 29, destacado: false, oferta: false },
+            { id: 23, nombre: "Vinagre de Manzana", precio: 2.60, categoria: "Condimentos", descripcion: "Vinagre de manzana orgánico, 500ml.", imagen: "https://images.unsplash.com/photo-1603537601081-c3d2f8e150e8?w=400", stock: 24, destacado: false, oferta: true },
+            { id: 24, nombre: "Papas Fritas", precio: 1.75, categoria: "Snacks", descripcion: "Papas fritas clásicas, 150g.", imagen: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400", stock: 48, destacado: false, oferta: false }
+        ];
+
+        // Variables para paginación
+        let productosFiltrados = [...productosCompletos];
+        let productosPorPagina = 8;
+        let paginaActual = 1;
+        let categoriaActiva = 'todas';
+
+        // Cargar categorías
+        function cargarCategorias() {
+            const categorias = ['todas', ...new Set(productosCompletos.map(p => p.categoria))];
+            const container = document.getElementById('categorias-container');
+            
+            categorias.forEach((categoria, index) => {
+                const badge = document.createElement('span');
+                badge.className = `badge categoria-badge ${index === 0 ? 'active bg-success' : 'bg-light text-dark border'}`;
+                badge.textContent = index === 0 ? 'Todos' : categoria;
+                badge.dataset.categoria = categoria;
+                badge.onclick = () => filtrarPorCategoria(categoria);
+                container.appendChild(badge);
+            });
+            
+            document.getElementById('total-productos').textContent = productosCompletos.length;
+        }
+
+        // Filtrar por categoría
+        function filtrarPorCategoria(categoria) {
+            categoriaActiva = categoria;
+            
+            // Actualizar badges activos
+            document.querySelectorAll('.categoria-badge').forEach(badge => {
+                badge.classList.remove('active', 'bg-success', 'text-white');
+                badge.classList.add('bg-light', 'text-dark', 'border');
+            });
+            
+            const badgeActivo = document.querySelector(`[data-categoria="${categoria}"]`);
+            badgeActivo.classList.remove('bg-light', 'text-dark', 'border');
+            badgeActivo.classList.add('active', 'bg-success', 'text-white');
+            
+            filtrarProductos();
+        }
+
+        // Filtrar productos
+        function filtrarProductos() {
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+            const precioMax = parseFloat(document.getElementById('rango-precio').value);
+            const orden = document.getElementById('ordenar').value;
+            
+            // Filtrar
+            productosFiltrados = productosCompletos.filter(producto => {
+                const coincideBusqueda = producto.nombre.toLowerCase().includes(busqueda) || 
+                                        producto.descripcion.toLowerCase().includes(busqueda) ||
+                                        producto.categoria.toLowerCase().includes(busqueda);
+                
+                const coincideCategoria = categoriaActiva === 'todas' || producto.categoria === categoriaActiva;
+                const coincidePrecio = producto.precio <= precioMax;
+                
+                return coincideBusqueda && coincideCategoria && coincidePrecio;
+            });
+            
+            // Ordenar
+            switch(orden) {
+                case 'nombre':
+                    productosFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                    break;
+                case 'precio-asc':
+                    productosFiltrados.sort((a, b) => a.precio - b.precio);
+                    break;
+                case 'precio-desc':
+                    productosFiltrados.sort((a, b) => b.precio - a.precio);
+                    break;
+                case 'recientes':
+                    // Simular productos recientes (IDs más altos)
+                    productosFiltrados.sort((a, b) => b.id - a.id);
+                    break;
+            }
+            
+            paginaActual = 1;
+            cargarProductos();
+            actualizarPaginacion();
+        }
+
+        // Cargar productos
+        function cargarProductos() {
+            const container = document.getElementById('productos-container');
+            container.innerHTML = '';
+            
+            const inicio = (paginaActual - 1) * productosPorPagina;
+            const fin = inicio + productosPorPagina;
+            const productosPagina = productosFiltrados.slice(inicio, fin);
+            
+            if (productosPagina.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4>No se encontraron productos</h4>
+                        <p class="text-muted">Intenta con otros términos de búsqueda o filtros</p>
+                        <button class="btn btn-success" onclick="limpiarFiltros()">
+                            <i class="fas fa-redo me-1"></i> Limpiar Filtros
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            productosPagina.forEach(producto => {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 col-sm-6 mb-4';
+                col.innerHTML = `
+                    <div class="card producto-card h-100">
+                        ${producto.oferta ? '<span class="badge bg-danger badge-oferta">OFERTA</span>' : ''}
+                        ${producto.stock < 10 ? '<span class="badge bg-warning badge-oferta" style="left: 10px;">BAJO STOCK</span>' : ''}
+                        
+                        <img src="${producto.imagen}" class="card-img-top producto-img" alt="${producto.nombre}" 
+                             onclick="mostrarDetalles(${producto.id})" style="cursor: pointer;">
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title" onclick="mostrarDetalles(${producto.id})" style="cursor: pointer;">
+                                ${producto.nombre}
+                            </h5>
+                            <p class="card-text flex-grow-1 small">${producto.descripcion}</p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="producto-precio">$${producto.precio.toFixed(2)}</span>
+                                    <span class="badge bg-light text-dark border">${producto.categoria}</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-outline-success" onclick="mostrarDetalles(${producto.id})">
+                                        <i class="fas fa-info-circle"></i> Detalles
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="agregarAlCarrito(${producto.id})" 
+                                            ${producto.stock === 0 ? 'disabled' : ''}>
+                                        <i class="fas fa-cart-plus"></i> ${producto.stock === 0 ? 'Agotado' : 'Agregar'}
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-box me-1"></i>Stock: ${producto.stock} unidades
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        // Mostrar detalles del producto
+        function mostrarDetalles(id) {
+            const producto = productosCompletos.find(p => p.id === id);
+            if (!producto) return;
+            
+            document.getElementById('modalTitulo').textContent = producto.nombre;
+            
+            const contenido = document.getElementById('modalContenido');
+            contenido.innerHTML = `
+                <div class="col-md-6">
+                    <img src="${producto.imagen}" class="img-fluid rounded" alt="${producto.nombre}">
+                    <div class="mt-3">
+                        <button class="btn btn-warning w-100" onclick="agregarAlCarrito(${producto.id})" 
+                                ${producto.stock === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-cart-plus me-2"></i>
+                            ${producto.stock === 0 ? 'Producto Agotado' : 'Agregar al Carrito'}
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="text-success">$${producto.precio.toFixed(2)}</h4>
+                    <p>${producto.descripcion}</p>
+                    
+                    <div class="mt-4">
+                        <h6>Información del Producto:</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Categoría:</strong> ${producto.categoria}</li>
+                            <li><strong>Stock disponible:</strong> ${producto.stock} unidades</li>
+                            <li><strong>Estado:</strong> ${producto.oferta ? '<span class="badge bg-danger">En Oferta</span>' : '<span class="badge bg-success">Disponible</span>'}</li>
+                            ${producto.stock < 10 ? '<li class="text-danger"><strong>⚠️ Stock bajo - ¡Apúrate!</strong></li>' : ''}
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>Beneficios:</h6>
+                        <div class="alert alert-success">
+                            ${producto.categoria === 'Granos' ? 'Rico en fibra, ayuda a la digestión' : 
+                              producto.categoria === 'Lácteos' ? 'Fuente de calcio y vitamina D' :
+                              producto.categoria === 'Aceites' ? 'Antioxidante, salud cardiovascular' :
+                              producto.categoria === 'Bebidas' ? 'Hidratación natural' :
+                              'Producto de alta calidad'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Configurar botón del modal
+            document.getElementById('btnAgregarModal').onclick = () => {
+                agregarAlCarrito(id);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetalles'));
+                modal.hide();
+            };
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalDetalles'));
+            modal.show();
+        }
+
+        // Actualizar rango de precio
+        function actualizarRangoPrecio() {
+            const precio = document.getElementById('rango-precio').value;
+            document.getElementById('precio-maximo').textContent = `$${parseFloat(precio).toFixed(2)}`;
+            filtrarProductos();
+        }
+
+        // Limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('busqueda').value = '';
+            document.getElementById('rango-precio').value = 20;
+            document.getElementById('ordenar').value = 'nombre';
+            document.getElementById('precio-maximo').textContent = '$20.00';
+            
+            filtrarPorCategoria('todas');
+            filtrarProductos();
+        }
+
+        // Actualizar paginación
+        function actualizarPaginacion() {
+            const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            if (totalPaginas <= 1) return;
+            
+            // Botón anterior
+            const liPrev = document.createElement('li');
+            liPrev.className = `page-item ${paginaActual === 1 ? 'disabled' : ''}`;
+            liPrev.innerHTML = `
+                <a class="page-link" href="#" onclick="cambiarPagina(${paginaActual - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            `;
+            pagination.appendChild(liPrev);
+            
+            // Números de página
+            for (let i = 1; i <= totalPaginas; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${paginaActual === i ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="cambiarPagina(${i})">${i}</a>`;
+                pagination.appendChild(li);
+            }
+            
+            // Botón siguiente
+            const liNext = document.createElement('li');
+            liNext.className = `page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`;
+            liNext.innerHTML = `
+                <a class="page-link" href="#" onclick="cambiarPagina(${paginaActual + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            `;
+            pagination.appendChild(liNext);
+        }
+
+        // Cambiar página
+        function cambiarPagina(numeroPagina) {
+            paginaActual = numeroPagina;
+            cargarProductos();
+            window.scrollTo({ top: document.getElementById('productos-container').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Estilos para el hero del catálogo
+            const heroCatalogo = document.querySelector('.hero-section-catalogo');
+            if (heroCatalogo) {
+                heroCatalogo.style.background = 'linear-gradient(rgba(0, 100, 0, 0.8), rgba(0, 100, 0, 0.8)), url("https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200")';
+                heroCatalogo.style.backgroundSize = 'cover';
+                heroCatalogo.style.backgroundPosition = 'center';
+            }
+            
+            cargarCategorias();
+            cargarProductos();
+            actualizarPaginacion();
+        });
+    </script>
+</body>
+</html>

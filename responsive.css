@@ -1,0 +1,41 @@
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 300px;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .producto-card {
+        margin-bottom: 20px;
+    }
+    
+    .social-links a {
+        font-size: 1.5rem;
+        margin: 0 10px;
+    }
+}
+
+/* Responsive para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .hero-section {
+        min-height: 350px;
+    }
+    
+    .producto-card {
+        margin-bottom: 15px;
+    }
+}
+
+/* Ajustes para pantallas grandes */
+@media (min-width: 1025px) {
+    .container {
+        max-width: 1200px;
+    }
+}

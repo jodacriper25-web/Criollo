@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Supermercado Yaruquíes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding-top: 0;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: linear-gradient(180deg, #198754 0%, #146c43 100%);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+        .sidebar-logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        .sidebar-menu a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 4px solid #ffc107;
+        }
+        .sidebar-menu a.active {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            border-left: 4px solid #ffc107;
+        }
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        .stat-card {
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card i {
+            font-size: 2.5rem;
+            opacity: 0.9;
+        }
+        .card-ventas { background: linear-gradient(135deg, #198754 0%, #20c997 100%); }
+        .card-productos { background: linear-gradient(135deg, #ffc107 0%, #ffca2c 100%); color: #000; }
+        .card-clientes { background: linear-gradient(135deg, #0d6efd 0%, #6ea8fe 100%); }
+        .card-stock { background: linear-gradient(135deg, #dc3545 0%, #ea868f 100%); }
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .alertas-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                min-height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF6iVUzaGnk8aVKNBtCcn5NkuO2OX6KTmhUw&s" 
+                 alt="Logo" width="60" height="60" class="rounded-circle mb-2">
+            <h5>Supermercado Yaruquíes</h5>
+            <small class="text-warning">Panel de Administración</small>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="active">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="productos-admin.html">
+                <i class="fas fa-boxes"></i> Gestión de Productos
+            </a>
+            <a href="ventas.html">
+                <i class="fas fa-shopping-cart"></i> Ventas
+            </a>
+            <a href="inventario.html">
+                <i class="fas fa-clipboard-list"></i> Inventario
+            </a>
+            <a href="clientes.html">
+                <i class="fas fa-users"></i> Clientes
+            </a>
+            <a href="reportes.html">
+                <i class="fas fa-chart-bar"></i> Reportes
+            </a>
+            <a href="configuracion.html">
+                <i class="fas fa-cog"></i> Configuración
+            </a>
+            <a href="../index.html" class="mt-5">
+                <i class="fas fa-store"></i> Ir al Sitio Web
+            </a>
+            <a href="#" onclick="cerrarSesion()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <!-- Barra Superior -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-success">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </h1>
+            <div class="d-flex align-items-center">
+                <span class="me-3 text-muted" id="fecha-hora"></span>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" 
+                            data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-2"></i>Administrador
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="configuracion.html">
+                            <i class="fas fa-user-cog me-2"></i>Mi Perfil
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="cerrarSesion()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Estadísticas (RF-04: Panel de administración con métricas) -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card card-ventas">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-0" id="total-ventas">$1,245.75</h2>
+                            <small>Ventas del Mes</small>
+                        </div>
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="mt-3">
+                        <small class="opacity-75">
+                            <i class="fas fa-arrow-up me-1"></i>12% vs mes anterior
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card card-productos">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-0" id="total-productos">156</h2>
+                            <small>Productos Activos</small>
+                        </div>
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="mt-3">
+                        <small class="opacity-75">
+                            <i class="fas fa-box-open me-1"></i>24 nuevos este mes
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card card-clientes">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-0" id="total-clientes">89</h2>
+                            <small>Clientes Registrados</small>
+                        </div>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="mt-3">
+                        <small class="opacity-75">
+                            <i class="fas fa-user-plus me-1"></i>15 nuevos clientes
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card card-stock">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-0" id="alertas-stock">8</h2>
+                            <small>Alertas de Stock</small>
+                        </div>
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="mt-3">
+                        <small class="opacity-75">
+                            <i class="fas fa-bell me-1"></i>Productos por reabastecer
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficas y Tablas -->
+        <div class="row">
+            <!-- Gráfica de Ventas -->
+            <div class="col-md-8">
+                <div class="table-container">
+                    <h4 class="mb-3">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Ventas - Últimos 30 Días
+                    </h4>
+                    <canvas id="graficaVentas" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Productos Más Vendidos -->
+            <div class="col-md-4">
+                <div class="table-container">
+                    <h4 class="mb-3">
+                        <i class="fas fa-medal text-warning me-2"></i>
+                        Productos Más Vendidos
+                    </h4>
+                    <div class="list-group">
+                        <div class="list-group-item border-0 d-flex align-items-center">
+                            <div class="me-3 position-relative">
+                                <span class="badge bg-success position-absolute top-0 start-100 translate-middle">1</span>
+                                <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100" 
+                                     class="rounded-circle" width="50" height="50" alt="Arroz">
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Arroz Integral</h6>
+                                <small class="text-muted">56 unidades vendidas</small>
+                            </div>
+                            <span class="badge bg-success">$140.00</span>
+                        </div>
+                        <div class="list-group-item border-0 d-flex align-items-center">
+                            <div class="me-3 position-relative">
+                                <span class="badge bg-warning position-absolute top-0 start-100 translate-middle">2</span>
+                                <img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=100" 
+                                     class="rounded-circle" width="50" height="50" alt="Aceite">
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Aceite de Oliva</h6>
+                                <small class="text-muted">32 unidades vendidas</small>
+                            </div>
+                            <span class="badge bg-warning">$184.00</span>
+                        </div>
+                        <div class="list-group-item border-0 d-flex align-items-center">
+                            <div class="me-3 position-relative">
+                                <span class="badge bg-info position-absolute top-0 start-100 translate-middle">3</span>
+                                <img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=100" 
+                                     class="rounded-circle" width="50" height="50" alt="Leche">
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Leche Deslactosada</h6>
+                                <small class="text-muted">28 unidades vendidas</small>
+                            </div>
+                            <span class="badge bg-info">$50.40</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Últimas Ventas y Alertas -->
+        <div class="row mt-4">
+            <!-- Últimas Ventas -->
+            <div class="col-md-7">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">
+                            <i class="fas fa-receipt text-primary me-2"></i>
+                            Últimas Ventas
+                        </h4>
+                        <a href="ventas.html" class="btn btn-sm btn-outline-success">
+                            Ver Todas <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th># Factura</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Productos</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-ventas">
+                                <!-- Datos se cargarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas de Stock (RF-05: Sistema de alertas) -->
+            <div class="col-md-5">
+                <div class="table-container">
+                    <h4 class="mb-3">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                        Alertas de Stock Bajo
+                    </h4>
+                    <div class="alertas-container">
+                        <div class="alert alert-warning d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle me-3 fs-4"></i>
+                            <div>
+                                <strong>Café Molido</strong>
+                                <div class="small">Stock: 5 unidades | Mínimo: 10</div>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                            <div>
+                                <strong>Azúcar Morena</strong>
+                                <div class="small">Stock: 3 unidades | Mínimo: 15</div>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle me-3 fs-4"></i>
+                            <div>
+                                <strong>Aceite de Oliva</strong>
+                                <div class="small">Stock: 8 unidades | Mínimo: 12</div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info d-flex align-items-center">
+                            <i class="fas fa-info-circle me-3 fs-4"></i>
+                            <div>
+                                <strong>Atún en Lata</strong>
+                                <div class="small">Stock: 10 unidades | Mínimo: 20</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generador de Contenido para Redes Sociales (RF-07) -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="table-container">
+                    <h4 class="mb-3">
+                        <i class="fas fa-share-alt text-info me-2"></i>
+                        Generador de Contenido para Redes Sociales
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">Producto a Promocionar</label>
+                                <select class="form-select" id="producto-promocion">
+                                    <option selected>Seleccionar producto...</option>
+                                    <option value="1">Arroz Integral - $2.50</option>
+                                    <option value="2">Aceite de Oliva - $5.75</option>
+                                    <option value="3">Leche Deslactosada - $1.80</option>
+                                    <option value="5">Café Molido - $4.20</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mensaje Promocional</label>
+                                <textarea class="form-control" id="mensaje-promocion" rows="3" 
+                                          placeholder="¡Gran oferta! No te pierdas nuestro..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Redes Sociales</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="facebook-check">
+                                    <label class="form-check-label" for="facebook-check">
+                                        <i class="fab fa-facebook text-primary me-1"></i> Facebook
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="instagram-check">
+                                    <label class="form-check-label" for="instagram-check">
+                                        <i class="fab fa-instagram text-danger me-1"></i> Instagram
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="whatsapp-check">
+                                    <label class="form-check-label" for="whatsapp-check">
+                                        <i class="fab fa-whatsapp text-success me-1"></i> WhatsApp
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="btn btn-success" onclick="generarPromocion()">
+                                <i class="fas fa-share me-1"></i> Generar y Compartir
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <i class="fas fa-eye me-1"></i> Vista Previa
+                                </div>
+                                <div class="card-body text-center">
+                                    <img src="https://via.placeholder.com/300x200/198754/ffffff?text=OFERTA" 
+                                         id="preview-imagen" class="img-fluid mb-3 rounded" alt="Preview">
+                                    <h6 id="preview-titulo">Título de la Promoción</h6>
+                                    <p class="small" id="preview-descripcion">Descripción de la oferta...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer del Dashboard -->
+        <footer class="mt-5 pt-3 border-top text-center text-muted">
+            <p class="small">© 2025 Supermercado Yaruquíes - Panel de Administración v1.0</p>
+            <p class="small">Última actualización: <span id="ultima-actualizacion"></span></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Datos simulados para el dashboard (RF-04: Panel de administración)
+        const ventasDatos = {
+            dias: ['1', '5', '10', '15', '20', '25', '30'],
+            montos: [120, 180, 150, 220, 190, 250, 280]
+        };
+
+        const ventasRecientes = [
+            { factura: 'FAC-00123', cliente: 'María González', fecha: '15/12/2025', productos: 3, total: 45.75, estado: 'Completada' },
+            { factura: 'FAC-00122', cliente: 'Carlos Rodríguez', fecha: '14/12/2025', productos: 5, total: 68.20, estado: 'Completada' },
+            { factura: 'FAC-00121', cliente: 'Ana Martínez', fecha: '14/12/2025', productos: 2, total: 22.50, estado: 'Pendiente' },
+            { factura: 'FAC-00120', cliente: 'Juan Pérez', fecha: '13/12/2025', productos: 4, total: 51.80, estado: 'Completada' },
+            { factura: 'FAC-00119', cliente: 'Laura Sánchez', fecha: '13/12/2025', productos: 1, total: 5.75, estado: 'Completada' }
+        ];
+
+        // Inicializar gráfica
+        function inicializarGrafica() {
+            const ctx = document.getElementById('graficaVentas').getContext('2d');
+            const grafica = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ventasDatos.dias,
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        data: ventasDatos.montos,
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Cargar tabla de ventas
+        function cargarTablaVentas() {
+            const tbody = document.getElementById('tabla-ventas');
+            tbody.innerHTML = '';
+            
+            ventasRecientes.forEach(venta => {
+                let estadoClass = venta.estado === 'Completada' ? 'badge bg-success' : 'badge bg-warning';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${venta.factura}</strong></td>
+                    <td>${venta.cliente}</td>
+                    <td>${venta.fecha}</td>
+                    <td>${venta.productos} items</td>
+                    <td><strong>$${venta.total.toFixed(2)}</strong></td>
+                    <td><span class="${estadoClass}">${venta.estado}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Actualizar fecha y hora
+        function actualizarFechaHora() {
+            const ahora = new Date();
+            const opciones = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('fecha-hora').textContent = 
+                ahora.toLocaleDateString('es-ES', opciones);
+        }
+
+        // Generar contenido para redes sociales (RF-07)
+        function generarPromocion() {
+            const productoSelect = document.getElementById('producto-promocion');
+            const mensaje = document.getElementById('mensaje-promocion').value;
+            const facebook = document.getElementById('facebook-check').checked;
+            const instagram = document.getElementById('instagram-check').checked;
+            const whatsapp = document.getElementById('whatsapp-check').checked;
+            
+            if (productoSelect.value === 'Seleccionar producto...' || !mensaje.trim()) {
+                alert('Por favor, selecciona un producto y escribe un mensaje promocional.');
+                return;
+            }
+            
+            if (!facebook && !instagram && !whatsapp) {
+                alert('Selecciona al menos una red social.');
+                return;
+            }
+            
+            // Simular generación de contenido
+            const redes = [];
+            if (facebook) redes.push('Facebook');
+            if (instagram) redes.push('Instagram');
+            if (whatsapp) redes.push('WhatsApp');
+            
+            alert(`¡Promoción generada exitosamente!\n\nSe publicará en: ${redes.join(', ')}\n\nMensaje: "${mensaje}"`);
+            
+            // Limpiar formulario
+            document.getElementById('mensaje-promocion').value = '';
+            document.getElementById('facebook-check').checked = false;
+            document.getElementById('instagram-check').checked = false;
+            document.getElementById('whatsapp-check').checked = false;
+        }
+
+        // Cerrar sesión
+        function cerrarSesion() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Actualizar última actualización
+        function actualizarUltimaActualizacion() {
+            const ahora = new Date();
+            document.getElementById('ultima-actualizacion').textContent = 
+                ahora.toLocaleTimeString('es-ES');
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarGrafica();
+            cargarTablaVentas();
+            actualizarFechaHora();
+            actualizarUltimaActualizacion();
+            
+            // Actualizar fecha/hora cada minuto
+            setInterval(actualizarFechaHora, 60000);
+            
+            // Actualizar estadísticas cada 5 minutos (simulado)
+            setInterval(actualizarUltimaActualizacion, 300000);
+            
+            // Prevenir acceso no autorizado
+            const usuario = localStorage.getItem('usuario_admin');
+            if (!usuario) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>

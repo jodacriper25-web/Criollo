@@ -1,0 +1,115 @@
+/* Estilos Generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 76px; /* Para la navbar fija */
+}
+
+.hero-section {
+    background: linear-gradient(rgba(32, 125, 70, 0.7), rgba(255, 255, 255, 0.7)),
+                url('https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqNSrgIy48rTlovkmo5MNazUv9c1Yx0Cjejg4wcPmaFDvhpygaAWQmZyJmoR83mvCvoOg1dM_3-b6UY18bYFbjYTY2wZpGGfgI9JoiwGnA9VSS_WTOHPvgI2F0OzgO5Fax_4w_Pwg=s680-w680-h510-rw');
+    background-size: cover;
+    background-position: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+/* Tarjetas de Productos */
+.producto-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.producto-img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.producto-precio {
+    color: #3811fa;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.badge-oferta {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+/* Botones */
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+}
+
+.btn-warning:hover {
+    background-color: #ffca2c;
+    border-color: #ffc720;
+}
+
+/* Social Links */
+.social-links a {
+    transition: opacity 0.3s;
+}
+
+.social-links a:hover {
+    opacity: 0.8;
+}
+
+/* Modal Carrito */
+.modal-content {
+    border-radius: 10px;
+}
+
+.carrito-item {
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 0;
+}
+
+.carrito-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive para imágenes */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}

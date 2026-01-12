@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Supermercado Yaruquíes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .contact-hero {
+            background: linear-gradient(rgba(0, 100, 0, 0.85), rgba(0, 100, 0, 0.85));
+            color: white;
+            padding: 80px 0 50px;
+            margin-top: 76px;
+        }
+        .contact-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .contact-card:hover {
+            transform: translateY(-10px);
+        }
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: 400px;
+        }
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        }
+        .horario-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .horario-item:last-child {
+            border-bottom: none;
+        }
+        .day-active {
+            font-weight: bold;
+            color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF6iVUzaGnk8aVKNBtCcn5NkuO2OX6KTmhUw&s" 
+                     alt="Logo Yaruquíes" width="40" height="40" class="d-inline-block align-top me-2">
+                SUPERMERCADO YARUQUÍES
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#ofertas">Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="contacto.html">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-warning btn-sm" href="admin/login.html">Admin</a></li>
+                </ul>
+                <div class="d-flex ms-3">
+                    <a href="#" class="btn btn-light position-relative" id="carrito-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="carrito-contador">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section Contacto -->
+    <section class="contact-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold">Contáctanos</h1>
+                    <p class="lead">Estamos aquí para atenderte. Visítanos, llámanos o escríbenos.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="https://wa.me/593998562847" class="btn btn-light btn-lg" target="_blank">
+                        <i class="fab fa-whatsapp me-2"></i> WhatsApp Directo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Información de Contacto -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card contact-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt fa-2x text-white"></i>
+                            </div>
+                            <h4 class="card-title">Dirección</h4>
+                            <p class="card-text">Av. Cristobal Colon & Padre Lobato<br>Riobamba, Ecuador</p>
+                            <button class="btn btn-outline-success" onclick="abrirMapa()">
+                                <i class="fas fa-directions me-1"></i> Cómo llegar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card contact-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone fa-2x text-white"></i>
+                            </div>
+                            <h4 class="card-title">Teléfono</h4>
+                            <p class="card-text">0998562847</p>
+                            <a href="tel:+593998562847" class="btn btn-outline-success">
+                                <i class="fas fa-phone me-1"></i> Llamar ahora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card contact-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock fa-2x text-white"></i>
+                            </div>
+                            <h4 class="card-title">Horario de Atención</h4>
+                            <p class="card-text">Lunes a Domingo<br>9:00 AM - 9:00 PM</p>
+                            <button class="btn btn-outline-success" onclick="verHorarioCompleto()">
+                                <i class="fas fa-calendar-alt me-1"></i> Ver horarios
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Mapa -->
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <h3 class="mb-4 text-success">
+                        <i class="fas fa-map-marked-alt me-2"></i>Nuestra Ubicación
+                    </h3>
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.032757697534!2d-78.6583823257891!3d-1.6712984363242573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d3a1576a4bdb99%3A0x18cf2ef89580ca10!2sAv.%20Cristobal%20Colon%20%26%20Padre%20Lobato%2C%20Riobamba!5e0!3m2!1ses!2sec!4v1699213456789!5m2!1ses!2sec" 
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+
+                <!-- Formulario de Contacto -->
+                <div class="col-lg-5">
+                    <div class="card contact-card">
+                        <div class="card-body p-4">
+                            <h3 class="card-title mb-4 text-success">
+                                <i class="fas fa-envelope me-2"></i>Envíanos un Mensaje
+                            </h3>
+                            
+                            <form id="formContacto">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre Completo</label>
+                                    <input type="text" class="form-control" id="nombre" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="asunto" class="form-label">Asunto</label>
+                                    <select class="form-select" id="asunto" required>
+                                        <option value="" selected disabled>Selecciona un asunto...</option>
+                                        <option value="Consulta general">Consulta general</option>
+                                        <option value="Información de productos">Información de productos</option>
+                                        <option value="Problema con pedido">Problema con pedido</option>
+                                        <option value="Sugerencias">Sugerencias</option>
+                                        <option value="Trabaja con nosotros">Trabaja con nosotros</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="mensaje" class="form-label">Mensaje</label>
+                                    <textarea class="form-control" id="mensaje" rows="4" required></textarea>
+                                </div>
+                                
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox" id="acepto" required>
+                                    <label class="form-check-label" for="acepto">
+                                        Acepto recibir información y ofertas promocionales
+                                    </label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-paper-plane me-2"></i> Enviar Mensaje
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horario Completo -->
+            <div class="row mt-5" id="horarioCompleto" style="display: none;">
+                <div class="col-12">
+                    <div class="card contact-card">
+                        <div class="card-body p-4">
+                            <h3 class="card-title mb-4 text-success">
+                                <i class="fas fa-calendar-alt me-2"></i>Horario Completo de Atención
+                            </h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Lunes</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Martes</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Miércoles</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Jueves</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Viernes</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Sábado</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span class="day-active">Domingo</span>
+                                        <span>9:00 AM - 9:00 PM</span>
+                                    </div>
+                                    <div class="horario-item d-flex justify-content-between">
+                                        <span>Feriados</span>
+                                        <span>10:00 AM - 6:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Nota:</strong> Los horarios pueden variar en días festivos. Te recomendamos llamar antes de visitarnos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h3 class="mb-4 text-success">
+                        <i class="fas fa-question-circle me-2"></i>Preguntas Frecuentes
+                    </h3>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    ¿Realizan entregas a domicilio?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sí, realizamos entregas a domicilio en Riobamba y áreas cercanas. El costo de envío depende de la zona y el monto de la compra. Para pedidos mayores a $20, el envío es gratuito dentro de la ciudad.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    ¿Qué métodos de pago aceptan?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Aceptamos efectivo, tarjetas de crédito/débito (Visa, MasterCard), transferencias bancarias y pagos a través de plataformas digitales como PayPal y Yappy.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    ¿Puedo hacer pedidos por WhatsApp?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    ¡Claro que sí! Puedes enviarnos tu lista de compras al 0998562847 por WhatsApp y te ayudaremos con tu pedido. También puedes consultar precios y disponibilidad de productos.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    ¿Tienen productos orgánicos?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sí, contamos con una sección especial de productos orgánicos y naturales. Incluimos frutas, verduras, granos y productos de limpieza ecológicos. Visita nuestra tienda física para ver la selección completa.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a href="https://wa.me/593998562847" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>SUPERMERCADO YARUQUÍES</h5>
+                    <p>Tu supermercado de confianza con los mejores precios y calidad.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Av. Cristobal Colon & Padre Lobato</p>
+                    <p><i class="fas fa-phone me-2"></i>0998562847</p>
+                    <p><i class="fas fa-clock me-2"></i>9:00 AM - 9:00 PM</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Síguenos</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center">
+                <p>&copy; 2025 SUPERMERCADO YARUQUÍES. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/carrito.js"></script>
+    <script>
+        // Inicializar carrito
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarCarritoUI();
+            
+            // Configurar botón del carrito
+            const carritoBtn = document.getElementById('carrito-btn');
+            if (carritoBtn) {
+                carritoBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    actualizarModalCarrito();
+                    const modal = new bootstrap.Modal(document.getElementById('carritoModal'));
+                    modal.show();
+                });
+            }
+        });
+
+        // Función para abrir mapa en nueva ventana
+        function abrirMapa() {
+            window.open('https://www.google.com/maps/place/Av.+Cristobal+Colon+%26+Padre+Lobato,+Riobamba/@-1.6712984,-78.6583823,17z/data=!3m1!4b1!4m6!3m5!1s0x91d3a1576a4bdb99:0x18cf2ef89580ca10!8m2!3d-1.6712984!4d-78.6558074!16s%2Fg%2F11f03kjp5y?entry=ttu', '_blank');
+        }
+
+        // Función para ver horario completo
+        function verHorarioCompleto() {
+            const horarioDiv = document.getElementById('horarioCompleto');
+            if (horarioDiv.style.display === 'none') {
+                horarioDiv.style.display = 'block';
+                window.scrollTo({
+                    top: horarioDiv.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            } else {
+                horarioDiv.style.display = 'none';
+            }
+        }
+
+        // Manejar formulario de contacto
+        document.getElementById('formContacto').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Obtener valores del formulario
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const telefono = document.getElementById('telefono').value;
+            const asunto = document.getElementById('asunto').value;
+            const mensaje = document.getElementById('mensaje').value;
+            
+            // Validación simple
+            if (!nombre || !email || !telefono || !asunto || !mensaje) {
+                alert('Por favor, completa todos los campos requeridos.');
+                return;
+            }
+            
+            // Simular envío del formulario
+            const datos = {
+                nombre,
+                email,
+                telefono,
+                asunto,
+                mensaje,
+                fecha: new Date().toLocaleString()
+            };
+            
+            // Guardar en localStorage (simulación de base de datos)
+            const contactos = JSON.parse(localStorage.getItem('contactos')) || [];
+            contactos.push(datos);
+            localStorage.setItem('contactos', JSON.stringify(contactos));
+            
+            // Mostrar confirmación
+            alert(`¡Gracias ${nombre}! Tu mensaje ha sido enviado correctamente. Te contactaremos pronto al ${telefono} o ${email}.`);
+            
+            // Reiniciar formulario
+            document.getElementById('formContacto').reset();
+            
+            // Mostrar notificación
+            mostrarNotificacion('Mensaje enviado exitosamente');
+        });
+
+        // Función para mostrar notificaciones
+        function mostrarNotificacion(mensaje) {
+            const notificacion = document.createElement('div');
+            notificacion.className = 'position-fixed top-0 end-0 p-3';
+            notificacion.style.zIndex = '9999';
+            notificacion.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Supermercado Yaruquíes</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.parentElement.parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${mensaje}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                if (notificacion.parentNode) {
+                    notificacion.remove();
+                }
+            }, 3000);
+        }
+
+        // FAQ interactivo
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Cerrar otros acordeones
+                const allAccordions = document.querySelectorAll('.accordion-collapse');
+                allAccordions.forEach(accordion => {
+                    if (accordion !== document.querySelector(this.dataset.bsTarget)) {
+                        const bsCollapse = bootstrap.Collapse.getInstance(accordion);
+                        if (bsCollapse) bsCollapse.hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Modal Carrito (copiado de index.html) -->
+    <div class="modal fade" id="carritoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-shopping-cart me-2"></i>Carrito de Compras</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="carrito-items">
+                        <p class="text-center">Tu carrito está vacío</p>
+                    </div>
+                    <div class="text-end mt-3">
+                        <h5>Total: $<span id="carrito-total">0.00</span></h5>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir Comprando</button>
+                    <button type="button" class="btn btn-warning" onclick="procederPago()">Proceder al Pago</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
